@@ -9,7 +9,9 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        RatingView()
+        RatingView(titleText: "Do you enjoy our app?") {
+            
+        }
     }
 }
 
@@ -18,12 +20,13 @@ struct ContentView: View {
 }
 
 struct RatingView: View {
-    
     @State var value: CGFloat = 1
+    var titleText: String
+    var onSubmit: () -> Void
     
     var body: some View {
         VStack {
-            Text("Do you enjoy our app?")
+            Text(titleText)
                 .font(.largeTitle)
                 .fontWeight(.semibold)
                 .foregroundStyle(.black)
@@ -44,6 +47,19 @@ struct RatingView: View {
                 .padding()
             
             Spacer()
+            
+            Button {
+                onSubmit()
+            } label: {
+                Text("Submit")
+                    .fontWeight(.medium)
+                    .foregroundStyle(.white)
+                    .padding()
+            }
+            .frame(width: 100, height: 40)
+            .background(.black)
+            .clipShape(.rect(cornerRadius: 5))
+            .padding()
         }
         .background {
             let color = switch value {
