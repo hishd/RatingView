@@ -19,7 +19,7 @@ struct ContentView: View {
 
 struct RatingView: View {
     
-    @State var value: CGFloat = 0.5
+    @State var value: CGFloat = 1
     
     var body: some View {
         VStack {
@@ -29,12 +29,12 @@ struct RatingView: View {
                 .foregroundStyle(.black)
                 .padding(.top, 20)
             
-            Spacer(minLength: 0)
+            Spacer()
             
             HStack(spacing: 20) {
                 EyesExpression(lidValue: value)
                 EyesExpression(lidValue: value)
-            }
+            }.padding(.bottom, ((1 - value) * 80))
             
             MouthExpressionShape(value: value)
                 .stroke(.black, lineWidth: 3)
@@ -43,7 +43,7 @@ struct RatingView: View {
             Slider(value: $value)
                 .padding()
             
-            Spacer(minLength: 0)
+            Spacer()
         }
         .background {
             let color = switch value {
@@ -104,6 +104,11 @@ fileprivate struct EyesExpression: View {
                 .frame(width: 100, height: 100)
                 .rotationEffect(.init(degrees: 180))
                 .offset(y: -100)
+            
+            Circle()
+                .fill(.black)
+                .frame(width: 15)
+                .offset(y: -20)
         }
     }
 }
