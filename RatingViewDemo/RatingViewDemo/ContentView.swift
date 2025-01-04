@@ -19,7 +19,7 @@ struct ContentView: View {
 
 struct RatingView: View {
     
-    @State var value: CGFloat = 0.0
+    @State var value: CGFloat = 0.5
     
     var body: some View {
         VStack {
@@ -31,7 +31,12 @@ struct RatingView: View {
             
             Spacer(minLength: 0)
             
-            ExpressionShape(value: value)
+            HStack(spacing: 20) {
+                EyesExpression(lidValue: value)
+                EyesExpression(lidValue: value)
+            }
+            
+            MouthExpressionShape(value: value)
                 .stroke(.black, lineWidth: 3)
                 .frame(height: 150)
             
@@ -57,7 +62,7 @@ struct RatingView: View {
     }
 }
 
-struct ExpressionShape: Shape {
+fileprivate struct MouthExpressionShape: Shape {
     
     var value: CGFloat
     
@@ -84,10 +89,47 @@ struct ExpressionShape: Shape {
 }
 
 
-struct EyesExpression: Shape {
+fileprivate struct EyesExpression: View {
+    
+    var lidValue: CGFloat
+    
+    var body: some View {
+        ZStack {
+            EyesShape()
+                .stroke(.black, lineWidth: 3)
+                .frame(width: 100, height: 100)
+            
+            EyesShape(value: lidValue)
+                .stroke(.black, lineWidth: 3)
+                .frame(width: 100, height: 100)
+                .rotationEffect(.init(degrees: 180))
+                .offset(y: -100)
+        }
+    }
+}
+
+fileprivate struct EyesShape: Shape {
+    
+    var value: CGFloat?
+    
     func path(in rect: CGRect) -> Path {
         return Path { path in
+            let center: CGFloat = rect.width / 2
             
+            let curveRadius: CGFloat = 55 * (value ?? 1)
+            
+            path.move(to: .init(x: center - 50, y: 0))
+            
+            let firstPoint: CGPoint = .init(x: center, y: curveRadius)
+            let firstControl1: CGPoint = .init(x: center - 50, y: 0)
+            let firstControl2: CGPoint = .init(x: center - 50, y: curveRadius)
+            
+            let secondPoint: CGPoint = .init(x: center + 50, y: 0)
+            let secondControl1: CGPoint = .init(x: center + 50, y: curveRadius)
+            let secondControl2: CGPoint = .init(x: center + 50, y: 0)
+            
+            path.addCurve(to: firstPoint, control1: firstControl1, control2: firstControl2)
+            path.addCurve(to: secondPoint, control1: secondControl1, control2: secondControl2)
         }
     }
 }
