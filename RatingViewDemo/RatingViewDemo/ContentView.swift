@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        RatingView(titleText: "Do you enjoy our app?") {
+        RatingView(titleText: "Do you enjoy our app?") { (rating: CGFloat, feedback: String) in
             
         }
     }
@@ -20,9 +20,12 @@ struct ContentView: View {
 }
 
 struct RatingView: View {
-    @State var value: CGFloat = 1
+    @State private var value: CGFloat = 1
+    @State private var text: String = ""
+    @FocusState private var isTextFocused: Bool
     var titleText: String
-    var onSubmit: () -> Void
+    var enableWrittenFeedback: Bool = true
+    var onSubmit: (_ rating: CGFloat, _ feedback: String) -> Void
     
     var body: some View {
         VStack {
@@ -32,24 +35,45 @@ struct RatingView: View {
                 .foregroundStyle(.black)
                 .padding(.top, 20)
             
-            Spacer()
+            VStack {
+                HStack(spacing: 20) {
+                    EyesExpression(lidValue: value)
+                    EyesExpression(lidValue: value)
+                }
+                .padding(.top, 50 + 30) //Path curve height of eyes = 50
+                .padding(.bottom, ((1 - value) * 80))
+                
+                MouthExpressionShape(value: value)
+                    .stroke(.black, lineWidth: 3)
+            }
             
-            HStack(spacing: 20) {
-                EyesExpression(lidValue: value)
-                EyesExpression(lidValue: value)
-            }.padding(.bottom, ((1 - value) * 80))
-            
-            MouthExpressionShape(value: value)
-                .stroke(.black, lineWidth: 3)
-                .frame(height: 150)
             
             Slider(value: $value)
                 .padding()
             
+            
+            if enableWrittenFeedback {
+                ZStack(alignment: .topLeading) {
+                    TextEditor(text: $text)
+                        .frame(height: 100)
+                        .padding(.leading, 5)
+                        .focused($isTextFocused)
+                    
+                    Text("Write feedback")
+                        .foregroundStyle(.gray)
+                        .padding(.leading, 10)
+                        .padding(.top, 10)
+                        .opacity(isTextFocused ? 0 : 1)
+                }
+                .background(.white)
+                .clipShape(.rect(cornerRadius: 10))
+                .padding()
+            }
+            
             Spacer()
             
             Button {
-                onSubmit()
+                onSubmit(value, text)
             } label: {
                 Text("Submit")
                     .fontWeight(.medium)
@@ -61,6 +85,7 @@ struct RatingView: View {
             .clipShape(.rect(cornerRadius: 5))
             .padding()
         }
+        .frame(maxHeight: .infinity, alignment: .top)
         .background {
             let color = switch value {
             case 0...0.3:
