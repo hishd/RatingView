@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        RatingView(titleText: "Do you enjoy our app?") { (rating: CGFloat, feedback: String) in
+        RatingView(titleText: "How is our app experience?") { (rating: CGFloat, feedback: String) in
             
         }
     }
@@ -44,6 +44,8 @@ struct RatingView: View {
                     .font(.largeTitle)
                     .fontWeight(.semibold)
                     .foregroundStyle(.black)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
                     .padding(.top, 20)
                 
                 VStack {
@@ -60,6 +62,11 @@ struct RatingView: View {
                 }
                 
                 Spacer()
+                
+                Text(commentTitle)
+                    .font(.largeTitle)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.black)
                 
                 ZStack(alignment: .leading) {
                     Color.black
@@ -133,9 +140,11 @@ struct RatingView: View {
             .frame(maxHeight: .infinity, alignment: .top)
             .background {
                 let color = switch value {
-                case 0...0.3:
+                case 0...0.2:
                     Color.red
-                case 0.3...0.7:
+                case 0.2...0.5:
+                    Color.orange
+                case 0.5...0.8:
                     Color.yellow
                 default:
                     Color.green
@@ -147,6 +156,21 @@ struct RatingView: View {
             }
         }
         
+    }
+}
+
+extension RatingView {
+    var commentTitle: String {
+        switch value {
+        case 0...0.2:
+            "BAD"
+        case 0.2...0.5:
+            "REGULAR"
+        case 0.5...0.8:
+            "GOOD"
+        default:
+            "EXCELLENT"
+        }
     }
 }
 
