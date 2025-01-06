@@ -56,30 +56,32 @@ struct RatingView: View {
                     
                     MouthExpressionShape(value: value)
                         .stroke(.black, lineWidth: 3)
-                        .frame(height: 150)
+//                        .frame(height: 150)
                 }
                 
                 Spacer()
                 
-//                ZStack(alignment: .leading) {
-//                    Color.black
-//                        .frame(width: width, height: 2)
-//                    
-//                    Image(systemName: "arrow.right")
-//                        .foregroundStyle(.white)
-//                        .frame(width: 50, height: 40)
-//                        .background(.black)
-//                        .clipShape(.rect(cornerRadius: 10))
-//                        .offset(x: value * (width - 90))
-//                        .gesture(DragGesture().onChanged({ drag in
-//                            let maxWidth = width - 90
-//                            let dragValue = drag.location.x - 30
-//                            if dragValue > 0 && dragValue < maxWidth {
-//                                self.value = dragValue / maxWidth
-//                            }
-//                        }))
-//                    
-//                }.padding(.horizontal, 20)
+                ZStack(alignment: .leading) {
+                    Color.black
+                        .frame(height: 2)
+                    
+                    Image(systemName: "arrow.right")
+                        .foregroundStyle(.white)
+                        .frame(width: 50, height: 40)
+                        .background(.black)
+                        .clipShape(.rect(cornerRadius: 10))
+                        .offset(x: value * (width - 90))
+                        .gesture(DragGesture().onChanged({ drag in
+                            let maxWidth = width - 90
+                            let dragValue = drag.location.x - 30
+                            if dragValue > 0 && dragValue < maxWidth {
+                                withAnimation {
+                                    self.value = dragValue / maxWidth
+                                }
+                            }
+                        }))
+                    
+                }.padding(.horizontal, 20)
                 
                 if enableWrittenFeedback {
                     ZStack(alignment: .topLeading) {
