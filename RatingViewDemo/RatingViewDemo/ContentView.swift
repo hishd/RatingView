@@ -20,7 +20,7 @@ struct ContentView: View {
 }
 
 struct RatingView: View {
-    @State private var value: CGFloat = 1
+    @State private var value: CGFloat = 0
     @State private var text: String = ""
     @FocusState private var isTextFocused: Bool
     var titleText: String
@@ -28,78 +28,101 @@ struct RatingView: View {
     var onSubmit: (_ rating: CGFloat, _ feedback: String) -> Void
     
     var body: some View {
-        VStack {
-            Text(titleText)
-                .font(.largeTitle)
-                .fontWeight(.semibold)
-                .foregroundStyle(.black)
-                .padding(.top, 20)
+        GeometryReader { proxy in
+            let width = proxy.frame(in: .local).width
             
             VStack {
-                HStack(spacing: 20) {
-                    EyesExpression(lidValue: value)
-                    EyesExpression(lidValue: value)
-                }
-                .padding(.top, 50 + 30) //Path curve height of eyes = 50
-                .padding(.bottom, ((1 - value) * 80))
+                Text(titleText)
+                    .font(.largeTitle)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.black)
+                    .padding(.top, 20)
                 
-                MouthExpressionShape(value: value)
-                    .stroke(.black, lineWidth: 3)
-            }
-            
-            
-            Slider(value: $value)
-                .padding()
-            
-            
-            if enableWrittenFeedback {
-                ZStack(alignment: .topLeading) {
-                    TextEditor(text: $text)
-                        .frame(height: 100)
-                        .padding(.leading, 5)
-                        .focused($isTextFocused)
+                VStack {
+                    HStack(spacing: 20) {
+                        EyesExpression(lidValue: value)
+                        EyesExpression(lidValue: value)
+                    }
+                    .padding(.top, 50 + 30) //Path curve height of eyes = 50
+                    .padding(.bottom, ((1 - value) * 80))
                     
-                    Text("Write feedback")
-                        .foregroundStyle(.gray)
-                        .padding(.leading, 10)
-                        .padding(.top, 10)
-                        .opacity(isTextFocused ? 0 : 1)
+                    MouthExpressionShape(value: value)
+                        .stroke(.black, lineWidth: 3)
+                        .frame(height: 150)
                 }
-                .background(.white)
-                .clipShape(.rect(cornerRadius: 10))
+                
+                Spacer()
+                
+                ZStack(alignment: .leading) {
+                    Color.black
+                        .frame(width: .infinity, height: 2)
+                    
+                    Image(systemName: "arrow.right")
+                        .foregroundStyle(.white)
+                        .frame(width: 50, height: 40)
+                        .background(.black)
+                        .clipShape(.rect(cornerRadius: 10))
+                        .offset(x: value * (width - 90))
+                        .gesture(DragGesture().onChanged({ drag in
+                            let maxWidth = width - 90
+                            let dragValue = drag.location.x - 30
+                            if dragValue > 0 && dragValue < maxWidth {
+                                self.value = dragValue / maxWidth
+                            }
+                        }))
+                    
+                }.padding(.horizontal, 20)
+                
+                if enableWrittenFeedback {
+                    ZStack(alignment: .topLeading) {
+                        TextEditor(text: $text)
+                            .frame(height: 100)
+                            .padding(.leading, 5)
+                            .focused($isTextFocused)
+                        
+                        Text("Write feedback")
+                            .foregroundStyle(.gray)
+                            .padding(.leading, 10)
+                            .padding(.top, 10)
+                            .opacity(isTextFocused ? 0 : 1)
+                    }
+                    .background(.white)
+                    .clipShape(.rect(cornerRadius: 10))
+                    .padding(.vertical)
+                    .padding(.horizontal, 20)
+                }
+                
+                
+                Button {
+                    onSubmit(value, text)
+                } label: {
+                    Text("Submit")
+                        .fontWeight(.medium)
+                        .foregroundStyle(.white)
+                        .padding()
+                }
+                .frame(width: 100, height: 40)
+                .background(.black)
+                .clipShape(.rect(cornerRadius: 5))
                 .padding()
             }
-            
-            Spacer()
-            
-            Button {
-                onSubmit(value, text)
-            } label: {
-                Text("Submit")
-                    .fontWeight(.medium)
-                    .foregroundStyle(.white)
-                    .padding()
+            .frame(maxHeight: .infinity, alignment: .top)
+            .background {
+                let color = switch value {
+                case 0...0.3:
+                    Color.red
+                case 0.3...0.7:
+                    Color.yellow
+                default:
+                    Color.green
+                }
+                
+                return color
+                    .ignoresSafeArea(.all)
+                    .animation(.easeInOut, value: value)
             }
-            .frame(width: 100, height: 40)
-            .background(.black)
-            .clipShape(.rect(cornerRadius: 5))
-            .padding()
         }
-        .frame(maxHeight: .infinity, alignment: .top)
-        .background {
-            let color = switch value {
-            case 0...0.3:
-                Color.red
-            case 0.3...0.7:
-                Color.yellow
-            default:
-                Color.green
-            }
-            
-            return color
-                .ignoresSafeArea(.all)
-                .animation(.easeInOut, value: value)
-        }
+        
     }
 }
 
