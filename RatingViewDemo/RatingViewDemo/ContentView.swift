@@ -24,8 +24,16 @@ struct RatingView: View {
     @State private var text: String = ""
     @FocusState private var isTextFocused: Bool
     var titleText: String
-    var enableWrittenFeedback: Bool = true
+    var enableWrittenFeedback: Bool
     var onSubmit: (_ rating: CGFloat, _ feedback: String) -> Void
+    
+    init(titleText: String, enableWrittenFeedback: Bool = true, onSubmit: @escaping (_: CGFloat, _: String) -> Void) {
+        self.titleText = titleText
+        self.enableWrittenFeedback = enableWrittenFeedback
+        self.onSubmit = onSubmit
+        
+        UITextView.appearance().backgroundColor = .clear
+    }
     
     var body: some View {
         GeometryReader { proxy in
@@ -53,33 +61,47 @@ struct RatingView: View {
                 
                 Spacer()
                 
-                ZStack(alignment: .leading) {
-                    Color.black
-                        .frame(width: .infinity, height: 2)
-                    
-                    Image(systemName: "arrow.right")
-                        .foregroundStyle(.white)
-                        .frame(width: 50, height: 40)
-                        .background(.black)
-                        .clipShape(.rect(cornerRadius: 10))
-                        .offset(x: value * (width - 90))
-                        .gesture(DragGesture().onChanged({ drag in
-                            let maxWidth = width - 90
-                            let dragValue = drag.location.x - 30
-                            if dragValue > 0 && dragValue < maxWidth {
-                                self.value = dragValue / maxWidth
-                            }
-                        }))
-                    
-                }.padding(.horizontal, 20)
+//                ZStack(alignment: .leading) {
+//                    Color.black
+//                        .frame(width: width, height: 2)
+//                    
+//                    Image(systemName: "arrow.right")
+//                        .foregroundStyle(.white)
+//                        .frame(width: 50, height: 40)
+//                        .background(.black)
+//                        .clipShape(.rect(cornerRadius: 10))
+//                        .offset(x: value * (width - 90))
+//                        .gesture(DragGesture().onChanged({ drag in
+//                            let maxWidth = width - 90
+//                            let dragValue = drag.location.x - 30
+//                            if dragValue > 0 && dragValue < maxWidth {
+//                                self.value = dragValue / maxWidth
+//                            }
+//                        }))
+//                    
+//                }.padding(.horizontal, 20)
                 
                 if enableWrittenFeedback {
                     ZStack(alignment: .topLeading) {
-                        TextEditor(text: $text)
-                            .frame(height: 100)
-                            .padding(.leading, 5)
-                            .focused($isTextFocused)
-                        
+                        if #available(iOS 16.0, *) {
+                            TextEditor(text: $text)
+                                .background(.white)
+                                .foregroundStyle(.black)
+                                .frame(height: 100)
+                                .padding(.horizontal, 5)
+                                .focused($isTextFocused)
+                                .scrollContentBackground(.hidden)
+                        } else {
+                            List {
+                                TextEditor(text: $text)
+                                    .background(.white)
+                                    .foregroundStyle(.black)
+                                    .frame(height: 100)
+                                    .focused($isTextFocused)
+                                    .padding(.horizontal, 5)
+                            }
+                        }
+
                         Text("Write feedback")
                             .foregroundStyle(.gray)
                             .padding(.leading, 10)
