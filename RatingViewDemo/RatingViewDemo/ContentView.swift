@@ -116,7 +116,7 @@ struct RatingView: View {
                                 .foregroundStyle(.gray)
                                 .padding(.leading, 10)
                                 .padding(.top, 10)
-                                .opacity(isTextFocused ? 0 : 1)
+                                .opacity(text.count > 0 ? 0 : 1)
                         }
                         .background(.white)
                         .clipShape(.rect(cornerRadius: 10))
