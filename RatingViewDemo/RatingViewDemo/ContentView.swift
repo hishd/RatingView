@@ -131,12 +131,11 @@ struct RatingView: View {
                         Text("Submit")
                             .fontWeight(.medium)
                             .foregroundStyle(.white)
+                            .frame(width: 100, height: 40)
+                            .background(.black)
+                            .clipShape(.rect(cornerRadius: 5))
                             .padding()
                     }
-                    .frame(width: 100, height: 40)
-                    .background(.black)
-                    .clipShape(.rect(cornerRadius: 5))
-                    .padding()
                 }
                 .frame(maxHeight: .infinity, alignment: .top)
             }
