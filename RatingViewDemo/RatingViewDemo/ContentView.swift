@@ -39,105 +39,107 @@ struct RatingView: View {
         GeometryReader { proxy in
             let width = proxy.frame(in: .local).width
             
-            VStack {
-                Text(titleText)
-                    .font(.largeTitle)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.black)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .padding(.top, 20)
+            ScrollView(showsIndicators: false) {
                 
                 VStack {
-                    HStack(spacing: 20) {
-                        EyesExpression(lidValue: value)
-                        EyesExpression(lidValue: value)
-                    }
-                    .padding(.top, 50 + 30) //Path curve height of eyes = 50
-                    .padding(.bottom, ((1 - value) * 80))
+                    Text(titleText)
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.black)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .padding(.top, 20)
                     
-                    MouthExpressionShape(value: value)
-                        .stroke(.black, lineWidth: 3)
-//                        .frame(height: 150)
-                }
-                
-                Spacer()
-                
-                Text(commentTitle)
-                    .font(.largeTitle)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.black)
-                
-                ZStack(alignment: .leading) {
-                    Color.black
-                        .frame(height: 2)
+                    VStack {
+                        HStack(spacing: 20) {
+                            EyesExpression(lidValue: value)
+                            EyesExpression(lidValue: value)
+                        }
+                        .padding(.top, 50 + 30) //Path curve height of eyes = 50
+                        .padding(.bottom, ((1 - value) * 80))
+                        
+                        MouthExpressionShape(value: value)
+                            .stroke(.black, lineWidth: 3)
+                    }.frame(height: 320)
                     
-                    Image(systemName: "arrow.right")
-                        .foregroundStyle(.white)
-                        .frame(width: 50, height: 40)
-                        .background(.black)
-                        .clipShape(.rect(cornerRadius: 10))
-                        .offset(x: value * (width - 90))
-                        .gesture(DragGesture().onChanged({ drag in
-                            let maxWidth = width - 90
-                            let dragValue = drag.location.x - 30
-                            if dragValue > 0 && dragValue < maxWidth {
-                                withAnimation {
-                                    self.value = dragValue / maxWidth
+                    
+                    Text(commentTitle)
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.black)
+                    
+                    ZStack(alignment: .leading) {
+                        Color.black
+                            .frame(height: 2)
+                        
+                        Image(systemName: "arrow.right")
+                            .foregroundStyle(.white)
+                            .frame(width: 50, height: 40)
+                            .background(.black)
+                            .clipShape(.rect(cornerRadius: 10))
+                            .offset(x: value * (width - 90))
+                            .gesture(DragGesture().onChanged({ drag in
+                                let maxWidth = width - 90
+                                let dragValue = drag.location.x - 30
+                                if dragValue > 0 && dragValue < maxWidth {
+                                    withAnimation {
+                                        self.isTextFocused = false
+                                        self.value = dragValue / maxWidth
+                                    }
                                 }
-                            }
-                        }))
+                            }))
+                        
+                    }.padding(.horizontal, 20)
                     
-                }.padding(.horizontal, 20)
-                
-                if enableWrittenFeedback {
-                    ZStack(alignment: .topLeading) {
-                        if #available(iOS 16.0, *) {
-                            TextEditor(text: $text)
-                                .background(.white)
-                                .foregroundStyle(.black)
-                                .frame(height: 100)
-                                .padding(.horizontal, 5)
-                                .focused($isTextFocused)
-                                .scrollContentBackground(.hidden)
-                        } else {
-                            List {
+                    if enableWrittenFeedback {
+                        ZStack(alignment: .topLeading) {
+                            if #available(iOS 16.0, *) {
                                 TextEditor(text: $text)
                                     .background(.white)
                                     .foregroundStyle(.black)
                                     .frame(height: 100)
-                                    .focused($isTextFocused)
                                     .padding(.horizontal, 5)
+                                    .focused($isTextFocused)
+                                    .scrollContentBackground(.hidden)
+                            } else {
+                                List {
+                                    TextEditor(text: $text)
+                                        .background(.white)
+                                        .foregroundStyle(.black)
+                                        .frame(height: 100)
+                                        .focused($isTextFocused)
+                                        .padding(.horizontal, 5)
+                                }
                             }
+                            
+                            Text("Write feedback")
+                                .foregroundStyle(.gray)
+                                .padding(.leading, 10)
+                                .padding(.top, 10)
+                                .opacity(isTextFocused ? 0 : 1)
                         }
-
-                        Text("Write feedback")
-                            .foregroundStyle(.gray)
-                            .padding(.leading, 10)
-                            .padding(.top, 10)
-                            .opacity(isTextFocused ? 0 : 1)
+                        .background(.white)
+                        .clipShape(.rect(cornerRadius: 10))
+                        .padding(.vertical)
+                        .padding(.horizontal, 20)
                     }
-                    .background(.white)
-                    .clipShape(.rect(cornerRadius: 10))
-                    .padding(.vertical)
-                    .padding(.horizontal, 20)
+                    
+                    
+                    Button {
+                        onSubmit(value, text)
+                    } label: {
+                        Text("Submit")
+                            .fontWeight(.medium)
+                            .foregroundStyle(.white)
+                            .padding()
+                    }
+                    .frame(width: 100, height: 40)
+                    .background(.black)
+                    .clipShape(.rect(cornerRadius: 5))
+                    .padding()
                 }
-                
-                
-                Button {
-                    onSubmit(value, text)
-                } label: {
-                    Text("Submit")
-                        .fontWeight(.medium)
-                        .foregroundStyle(.white)
-                        .padding()
-                }
-                .frame(width: 100, height: 40)
-                .background(.black)
-                .clipShape(.rect(cornerRadius: 5))
-                .padding()
+                .frame(maxHeight: .infinity, alignment: .top)
             }
-            .frame(maxHeight: .infinity, alignment: .top)
             .background {
                 let color = switch value {
                 case 0...0.2:
@@ -153,6 +155,9 @@ struct RatingView: View {
                 return color
                     .ignoresSafeArea(.all)
                     .animation(.easeInOut, value: value)
+            }
+            .onTapGesture {
+                isTextFocused = false
             }
         }
         
