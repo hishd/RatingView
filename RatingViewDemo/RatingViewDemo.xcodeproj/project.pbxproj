@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		FD920DC72D2F1DFD004D50E3 /* RatingView in Frameworks */ = {isa = PBXBuildFile; productRef = FD920DC62D2F1DFD004D50E3 /* RatingView */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		FD21A56E2D292B4500B63C94 /* RatingViewDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RatingViewDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD920DC72D2F1DFD004D50E3 /* RatingView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = RatingViewDemo;
 			packageProductDependencies = (
+				FD920DC62D2F1DFD004D50E3 /* RatingView */,
 			);
 			productName = RatingViewDemo;
 			productReference = FD21A56E2D292B4500B63C94 /* RatingViewDemo.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = FD21A5652D292B4500B63C94;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				FD920DC52D2F1DFD004D50E3 /* XCLocalSwiftPackageReference "../../RatingView" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FD21A56F2D292B4500B63C94 /* Products */;
 			projectDirPath = "";
@@ -326,6 +335,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		FD920DC52D2F1DFD004D50E3 /* XCLocalSwiftPackageReference "../../RatingView" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../RatingView;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FD920DC62D2F1DFD004D50E3 /* RatingView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RatingView;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FD21A5662D292B4500B63C94 /* Project object */;
 }
