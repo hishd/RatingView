@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct RatingView: View {
+public struct RatingView: View {
     @State private var value: CGFloat = 0
     @State private var text: String = ""
     @FocusState private var isTextFocused: Bool
@@ -23,7 +23,7 @@ struct RatingView: View {
         UITextView.appearance().backgroundColor = .clear
     }
     
-    var body: some View {
+    public var body: some View {
         GeometryReader { proxy in
             let width = proxy.frame(in: .local).width
             
@@ -40,8 +40,8 @@ struct RatingView: View {
                     
                     VStack {
                         HStack(spacing: 20) {
-                            EyesExpression(lidValue: value)
-                            EyesExpression(lidValue: value)
+                            EyesExpressionView(lidValue: value)
+                            EyesExpressionView(lidValue: value)
                         }
                         .padding(.top, 50 + 30) //Path curve height of eyes = 50
                         .padding(.bottom, ((1 - value) * 80))
@@ -162,83 +162,6 @@ extension RatingView {
             "GOOD"
         default:
             "EXCELLENT"
-        }
-    }
-}
-
-fileprivate struct MouthExpressionShape: Shape {
-    
-    var value: CGFloat
-    
-    func path(in rect: CGRect) -> Path {
-        return Path { path in
-            let center: CGFloat = rect.width / 2
-            
-            let curveRadius: CGFloat = (200 * value) - 100
-            
-            path.move(to: .init(x: center - 150, y: 0))
-            
-            let firstPoint: CGPoint = .init(x: center, y: curveRadius)
-            let firstControl1: CGPoint = .init(x: center - 145, y: 0)
-            let firstControl2: CGPoint = .init(x: center - 145, y: curveRadius)
-            
-            let secondPoint: CGPoint = .init(x: center + 150, y: 0)
-            let secondControl1: CGPoint = .init(x: center + 145, y: curveRadius)
-            let secondControl2: CGPoint = .init(x: center + 145, y: 0)
-            
-            path.addCurve(to: firstPoint, control1: firstControl1, control2: firstControl2)
-            path.addCurve(to: secondPoint, control1: secondControl1, control2: secondControl2)
-        }
-    }
-}
-
-
-fileprivate struct EyesExpression: View {
-    
-    var lidValue: CGFloat
-    
-    var body: some View {
-        ZStack {
-            EyesShape()
-                .stroke(.black, lineWidth: 3)
-                .frame(width: 100, height: 100)
-            
-            EyesShape(value: lidValue)
-                .stroke(.black, lineWidth: 3)
-                .frame(width: 100, height: 100)
-                .rotationEffect(.init(degrees: 180))
-                .offset(y: -100)
-            
-            Circle()
-                .fill(.black)
-                .frame(width: 15)
-                .offset(y: -20)
-        }
-    }
-}
-
-fileprivate struct EyesShape: Shape {
-    
-    var value: CGFloat?
-    
-    func path(in rect: CGRect) -> Path {
-        return Path { path in
-            let center: CGFloat = rect.width / 2
-            
-            let curveRadius: CGFloat = 55 * (value ?? 1)
-            
-            path.move(to: .init(x: center - 50, y: 0))
-            
-            let firstPoint: CGPoint = .init(x: center, y: curveRadius)
-            let firstControl1: CGPoint = .init(x: center - 50, y: 0)
-            let firstControl2: CGPoint = .init(x: center - 50, y: curveRadius)
-            
-            let secondPoint: CGPoint = .init(x: center + 50, y: 0)
-            let secondControl1: CGPoint = .init(x: center + 50, y: curveRadius)
-            let secondControl2: CGPoint = .init(x: center + 50, y: 0)
-            
-            path.addCurve(to: firstPoint, control1: firstControl1, control2: firstControl2)
-            path.addCurve(to: secondPoint, control1: secondControl1, control2: secondControl2)
         }
     }
 }
